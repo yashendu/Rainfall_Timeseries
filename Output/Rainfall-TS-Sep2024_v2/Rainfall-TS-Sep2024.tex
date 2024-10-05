@@ -1,0 +1,2329 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{soul}      % strikethrough (\st) support for pandoc >= 3.0.0
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+
+
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{Rainfall-TS-Sep2024}
+    
+    
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb.
+    \makeatletter
+        \newbox\Wrappedcontinuationbox
+        \newbox\Wrappedvisiblespacebox
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}}
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}}
+        \newcommand*\Wrappedcontinuationindent {3ex }
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox}
+        % Take advantage of the already applied Pygments mark-up to insert
+        % potential linebreaks for TeX processing.
+        %        {, <, #, %, $, ' and ": go to next line.
+        %        _, }, ^, &, >, - and ~: stay at end of broken line.
+        % Use of \textquotesingle for straight quote.
+        \newcommand*\Wrappedbreaksatspecials {%
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}%
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}%
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}%
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}%
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}%
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}%
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}%
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}%
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}%
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}%
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}%
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}%
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}%
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}%
+        }
+        % Some characters . , ; ? ! / are not pygmentized.
+        % This macro makes them "active" and they will insert potential linebreaks
+        \newcommand*\Wrappedbreaksatpunct {%
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}%
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}%
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}%
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}%
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}%
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}%
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}%
+            \catcode`\.\active
+            \catcode`\,\active
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active
+            \lccode`\~`\~
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    Analyzing and Forecasting Rainfall (Monthly Avg) using statistical
+methods and Machine Learning.
+
+The Excel file has 02 sheets (Avg and SE). Avg is the average value of
+the concerned parameter while SE has the standard error associated with
+the average value. The file has monthly time series data from Jan 1990
+to Dec 2022. The parameter in column B is rainfall (consider as Y),
+while indices from column C to K affect rainfall over a region (consider
+as X). Details of parameters from columns C to K are:
+
+\begin{itemize}
+\item
+  RH\_\%: Relative humidity (in \%)
+\item
+  Dew\_Point\_°C: Dew point temperature (in °C)
+\item
+  Cloud\_Amount\_\%: Cloud cover fraction (in \%)
+\item
+  Air\_T\_°C: Air temperature (in °C)
+\item
+  WS\_m/s: Wind speed (in m/s)
+\item
+  SWR\_W/m2: Shortwave radiation (in W/m2)
+\item
+  Soil\_Mois\_cum/cum: Soil moisture in the top 10 cm of soil (in
+  cu.m/cu.m)
+\item
+  Air\_Pres\_Pa: Air pressure (in Pa)
+\item
+  ET\_mm/month: Evapotranspiration (in mm/month)
+\item
+  Training dataset: 01 Jan 1990 to 31 Dec 2013
+\item
+  Validation dataset: 01 Jan 2014 to 31 Dec 2022
+\end{itemize}
+
+We are exploring the possibilities of rainfall prediction using the SVM
+and random forest and other models. The preferred model performance
+indicators to use are * RMSE * MAE (mean absolute error), and * MAPE
+(mean absolute percentage error).
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Import necessary py libraries}
+\PY{k+kn}{import} \PY{n+nn}{os}\PY{o}{,} \PY{n+nn}{sys}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+
+\PY{c+c1}{\PYZsh{}to ignore warnings}
+\PY{k+kn}{import} \PY{n+nn}{warnings}
+\PY{n}{warnings}\PY{o}{.}\PY{n}{filterwarnings}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ignore}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{api} \PY{k}{as} \PY{n+nn}{sm}
+\PY{k+kn}{from} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{graphics}\PY{n+nn}{.}\PY{n+nn}{tsaplots} \PY{k+kn}{import} \PY{n}{plot\PYZus{}acf}
+\PY{k+kn}{from} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{tsa}\PY{n+nn}{.}\PY{n+nn}{stattools} \PY{k+kn}{import} \PY{n}{adfuller}
+\PY{k+kn}{from} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{tsa}\PY{n+nn}{.}\PY{n+nn}{seasonal} \PY{k+kn}{import} \PY{n}{seasonal\PYZus{}decompose}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{metrics} \PY{k+kn}{import} \PY{n}{mean\PYZus{}squared\PYZus{}error}
+
+
+\PY{k+kn}{import} \PY{n+nn}{itertools}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} \PYZsh{} Dependency for excel read (One time)}
+\PY{c+c1}{\PYZsh{} !pip install openpyxl}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Check working directory/ set working directory/ set input folder path}
+
+\PY{n}{path} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{P:}\PY{l+s+s2}{\PYZbs{}}\PY{l+s+s2}{IT}\PY{l+s+s2}{\PYZbs{}}\PY{l+s+s2}{Rainfall\PYZhy{}TS\PYZhy{}Sep2024}\PY{l+s+s2}{\PYZbs{}}\PY{l+s+s2}{Rainfall\PYZus{}Timeseries}\PY{l+s+s2}{\PYZdq{}}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Current working directory is set as:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{path}\PY{p}{)}
+\PY{n}{file\PYZus{}path} \PY{o}{=} \PY{n}{path}\PY{o}{+}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s1}{input}\PY{l+s+s1}{\PYZsq{}}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Input files are under the folder:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{file\PYZus{}path}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{}List files under input folder}
+\PY{n}{os}\PY{o}{.}\PY{n}{listdir}\PY{p}{(}\PY{n}{file\PYZus{}path}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Current working directory is set as: P:\textbackslash{}IT\textbackslash{}Rainfall-TS-
+Sep2024\textbackslash{}Rainfall\_Timeseries
+Input files are under the folder: P:\textbackslash{}IT\textbackslash{}Rainfall-TS-
+Sep2024\textbackslash{}Rainfall\_Timeseries\textbackslash{}input
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+['Data\_Rainfall\_Prediction\_USGCM.xlsx']
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{Avg} \PY{o}{=} \PY{n}{file\PYZus{}path}\PY{o}{+}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s2}{Data\PYZus{}Rainfall\PYZus{}Prediction\PYZus{}USGCM.xlsx}\PY{l+s+s2}{\PYZdq{}}
+
+
+\PY{c+c1}{\PYZsh{} Read the input files}
+
+\PY{n}{df\PYZus{}Avg} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}excel}\PY{p}{(}\PY{n}{file\PYZus{}path} \PY{o}{+}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s2}{Data\PYZus{}Rainfall\PYZus{}Prediction\PYZus{}USGCM.xlsx}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{sheet\PYZus{}name}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+\PY{n}{df\PYZus{}SE} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}excel}\PY{p}{(}\PY{n}{file\PYZus{}path} \PY{o}{+}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}\PYZbs{}}\PY{l+s+s2}{Data\PYZus{}Rainfall\PYZus{}Prediction\PYZus{}USGCM.xlsx}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{sheet\PYZus{}name}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Descriptive Analytics on Dataset
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df\PYZus{}Avg}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+    Month-year     Rain\_mm       RH\_\%  Dew\_Point\_°C  Cloud\_Amount\_\%  \textbackslash{}
+0   1990-01-01    9.014030  29.964444     -1.340000       28.943333
+1   1990-02-01   31.475803  42.185556      4.015556       54.024444
+2   1990-03-01   17.078917  30.737778      3.087778       44.677778
+3   1990-04-01    2.704660  17.756667      1.768889       36.974444
+4   1990-05-01   16.200781  26.618889     12.231111       70.660000
+..         {\ldots}         {\ldots}        {\ldots}           {\ldots}             {\ldots}
+391 2022-08-01  188.385804  77.000000     24.718889       81.926667
+392 2022-09-01  253.565665  78.410000     24.028889       60.655556
+393 2022-10-01  127.415645  76.618889     19.396667       30.790000
+394 2022-11-01    0.031965  69.993333     12.811111       16.972222
+395 2022-12-01    2.372392  60.513333      6.810000       23.676667
+
+      Air\_T\_°C    WS\_m/s    SWR\_W/m2  Soil\_Mois\_cum/cum   Air\_Pres\_Pa  \textbackslash{}
+0    19.730960  5.889429  157.799111           0.190516  99850.118606
+1    20.425801  4.589979  166.008516           0.198606  99686.964186
+2    24.333952  4.742352  217.592568           0.177592  99490.063841
+3    31.297905  6.420676  244.281166           0.160711  98832.197942
+4    35.571863  4.477367  243.126901           0.176275  98443.907152
+..         {\ldots}       {\ldots}         {\ldots}                {\ldots}           {\ldots}
+391  29.007510  5.162503  196.557370           0.332387  98470.687835
+392  28.283159  4.383535  179.436452           0.349043  98778.926774
+393  24.708316  3.156706  167.869687           0.363000  99442.913650
+394  20.459165  3.518426  140.425897           0.272394  99781.840553
+395  16.920918  4.033786  129.404057           0.201455  99860.731616
+
+     ET\_mm/month
+0      59.103956
+1      53.675091
+2      29.731702
+3       6.528008
+4      11.553887
+..           {\ldots}
+391   136.274561
+392   134.123959
+393   106.765785
+394    51.961677
+395    32.255361
+
+[396 rows x 11 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df\PYZus{}SE}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+    Month-year   Rain\_mm      RH\_\%  Dew\_Point\_°C  Cloud\_Amount\_\%  Air\_T\_°C  \textbackslash{}
+0   1990-01-01  0.079583  0.644994      0.214437        2.472732  0.061176
+1   1990-02-01  0.398202  1.197770      0.098645        0.968860  0.076334
+2   1990-03-01  0.145088  2.034543      0.553396        0.936011  0.084061
+3   1990-04-01  0.107626  0.820369      0.276428        2.190209  0.064854
+4   1990-05-01  0.317898  0.337711      0.151982        2.110934  0.024254
+..         {\ldots}       {\ldots}       {\ldots}           {\ldots}             {\ldots}       {\ldots}
+391 2022-08-01  1.540608  2.176294      0.260520        0.954321  0.032938
+392 2022-09-01  1.721940  2.057870      0.272690        2.969574  0.033339
+393 2022-10-01  0.838470  0.530787      0.206868        0.935739  0.015943
+394 2022-11-01  0.012082  0.961290      0.193358        2.510118  0.018776
+395 2022-12-01  0.095602  1.457933      0.433490        1.929064  0.032802
+
+       WS\_m/s  SWR\_W/m2  Soil\_Mois\_cum/cum  Unnamed: 9  ET\_mm/month
+0    0.031627  0.527111           0.001342   30.064191     0.889437
+1    0.022232  0.685026           0.001422   30.177887     0.682230
+2    0.006031  0.190514           0.001362   29.585329     0.524374
+3    0.009983  0.304638           0.001412   28.733816     0.147118
+4    0.005593  0.335658           0.001576   29.523641     0.477402
+..        {\ldots}       {\ldots}                {\ldots}         {\ldots}          {\ldots}
+391  0.020541  0.239786           0.001348   29.742875     1.225524
+392  0.014663  0.464107           0.002809   30.832566     1.343071
+393  0.008677  0.418701           0.001878   31.214077     1.365992
+394  0.017732  0.472652           0.002477   31.415346     1.013993
+395  0.027817  0.237796           0.001625   31.296527     0.354709
+
+[396 rows x 11 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df\PYZus{}Avg}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                          Month-year     Rain\_mm        RH\_\%  Dew\_Point\_°C  \textbackslash{}
+count                            396  396.000000  396.000000    396.000000
+mean   2006-06-16 13:56:21.818181760   75.453002   47.464167     11.262910
+min              1990-01-01 00:00:00    0.000000    8.403333     -6.104444
+25\%              1998-03-24 06:00:00    7.205603   29.853611      3.116944
+50\%              2006-06-16 00:00:00   17.302752   44.607778      8.945000
+75\%              2014-09-08 12:00:00  128.241655   65.521389     21.187222
+max              2022-12-01 00:00:00  465.058800   87.320000     25.921111
+std                              NaN  104.863389   21.234400      9.378826
+
+       Cloud\_Amount\_\%    Air\_T\_°C      WS\_m/s    SWR\_W/m2  Soil\_Mois\_cum/cum  \textbackslash{}
+count      396.000000  396.000000  396.000000  396.000000         396.000000
+mean        45.307045   26.709498    4.445463  186.307274           0.241711
+min          5.965556   14.004320    2.599631  114.193999           0.149992
+25\%         28.865278   21.211767    3.875586  157.861805           0.179781
+50\%         41.230556   27.614273    4.520187  182.592483           0.209875
+75\%         61.312778   31.526174    4.954314  215.246338           0.303251
+max         92.045556   37.843787    6.760548  259.506453           0.414747
+std         22.013287    6.217932    0.795651   37.917461           0.075716
+
+         Air\_Pres\_Pa  ET\_mm/month
+count     396.000000   396.000000
+mean    99107.976901    64.687739
+min     97936.988062     4.107366
+25\%     98455.776532    28.527426
+50\%     99163.933607    51.682022
+75\%     99741.452906   103.036894
+max    100139.088155   163.326362
+std       662.403859    46.333728
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df\PYZus{}Avg}\PY{o}{.}\PY{n}{corr}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                   Month-year   Rain\_mm      RH\_\%  Dew\_Point\_°C  \textbackslash{}
+Month-year           1.000000  0.048172  0.155573      0.119657
+Rain\_mm              0.048172  1.000000  0.727830      0.817442
+RH\_\%                 0.155573  0.727830  1.000000      0.799814
+Dew\_Point\_°C         0.119657  0.817442  0.799814      1.000000
+Cloud\_Amount\_\%      -0.061645  0.799042  0.424880      0.688347
+Air\_T\_°C            -0.032683  0.300009 -0.142170      0.459805
+WS\_m/s              -0.108719  0.072354 -0.394333     -0.087703
+SWR\_W/m2            -0.131904 -0.029835 -0.451631      0.092514
+Soil\_Mois\_cum/cum    0.119205  0.818991  0.934725      0.849203
+Air\_Pres\_Pa          0.021967 -0.631598 -0.197367     -0.705230
+ET\_mm/month          0.065483  0.767379  0.879845      0.761668
+
+                   Cloud\_Amount\_\%  Air\_T\_°C    WS\_m/s  SWR\_W/m2  \textbackslash{}
+Month-year              -0.061645 -0.032683 -0.108719 -0.131904
+Rain\_mm                  0.799042  0.300009  0.072354 -0.029835
+RH\_\%                     0.424880 -0.142170 -0.394333 -0.451631
+Dew\_Point\_°C             0.688347  0.459805 -0.087703  0.092514
+Cloud\_Amount\_\%           1.000000  0.501925  0.336223  0.233488
+Air\_T\_°C                 0.501925  1.000000  0.461461  0.861652
+WS\_m/s                   0.336223  0.461461  1.000000  0.596696
+SWR\_W/m2                 0.233488  0.861652  0.596696  1.000000
+Soil\_Mois\_cum/cum        0.526675  0.067096 -0.249333 -0.232029
+Air\_Pres\_Pa             -0.754324 -0.893916 -0.441231 -0.655223
+ET\_mm/month              0.443870 -0.016991 -0.195505 -0.241432
+
+                   Soil\_Mois\_cum/cum  Air\_Pres\_Pa  ET\_mm/month
+Month-year                  0.119205     0.021967     0.065483
+Rain\_mm                     0.818991    -0.631598     0.767379
+RH\_\%                        0.934725    -0.197367     0.879845
+Dew\_Point\_°C                0.849203    -0.705230     0.761668
+Cloud\_Amount\_\%              0.526675    -0.754324     0.443870
+Air\_T\_°C                    0.067096    -0.893916    -0.016991
+WS\_m/s                     -0.249333    -0.441231    -0.195505
+SWR\_W/m2                   -0.232029    -0.655223    -0.241432
+Soil\_Mois\_cum/cum           1.000000    -0.381739     0.944357
+Air\_Pres\_Pa                -0.381739     1.000000    -0.298291
+ET\_mm/month                 0.944357    -0.298291     1.000000
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df\PYZus{}Avg}\PY{o}{.}\PY{n}{shape}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+(396, 11)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df\PYZus{}Avg}\PY{o}{.}\PY{n}{isna}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Month-year           0
+Rain\_mm              0
+RH\_\%                 0
+Dew\_Point\_°C         0
+Cloud\_Amount\_\%       0
+Air\_T\_°C             0
+WS\_m/s               0
+SWR\_W/m2             0
+Soil\_Mois\_cum/cum    0
+Air\_Pres\_Pa          0
+ET\_mm/month          0
+dtype: int64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{df\PYZus{}Avg}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 396 entries, 0 to 395
+Data columns (total 11 columns):
+ \#   Column             Non-Null Count  Dtype
+---  ------             --------------  -----
+ 0   Month-year         396 non-null    datetime64[ns]
+ 1   Rain\_mm            396 non-null    float64
+ 2   RH\_\%               396 non-null    float64
+ 3   Dew\_Point\_°C       396 non-null    float64
+ 4   Cloud\_Amount\_\%     396 non-null    float64
+ 5   Air\_T\_°C           396 non-null    float64
+ 6   WS\_m/s             396 non-null    float64
+ 7   SWR\_W/m2           396 non-null    float64
+ 8   Soil\_Mois\_cum/cum  396 non-null    float64
+ 9   Air\_Pres\_Pa        396 non-null    float64
+ 10  ET\_mm/month        396 non-null    float64
+dtypes: datetime64[ns](1), float64(10)
+memory usage: 34.2 KB
+    \end{Verbatim}
+
+    Key observations on rainfall data from Descriptive analysis
+
+\begin{itemize}
+\tightlist
+\item
+  Rows, cols = (396, 11)
+\item
+  DateTime is index column
+\item
+  Rest are float
+\item
+  2 Parameters with negative corr wrt rainfall (rest are positive)
+
+  \begin{enumerate}
+  \def\labelenumi{\arabic{enumi}.}
+  \tightlist
+  \item
+    SWR\_W/m2: Shortwave radiation (in W/m2)
+  \item
+    Air\_Pres\_Pa: Air pressure (in Pa)
+  \end{enumerate}
+\item
+  No NULL value
+\end{itemize}
+
+Clean data sample! Good data collection and cleaning job!! :) Nothing to
+be done here.
+
+    28/09/2024: Some recommended changes to dataset based on further
+analysis
+
+we should select the following parameters for the prediction model
+
+\begin{itemize}
+\tightlist
+\item
+  Dew\_Point\_°C
+\item
+  Cloud\_Amount\_\%
+\item
+  Soil\_Mois\_cum/cum
+\item
+  ET\_mm/month
+\item
+  Air\_Pres\_Pa
+\item
+  SWR\_W/m2
+\end{itemize}
+
+Further, we may translate the Dew\_Point\_°C to Kelvin (by adding 273.15
+to column D) for positive values of the respective parameter.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{52}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{data\PYZus{}v2} \PY{o}{=} \PY{n}{df\PYZus{}Avg}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)} \PY{c+c1}{\PYZsh{}Create a copy before transformations, we can always fallback to this if something goes off}
+\PY{c+c1}{\PYZsh{} spliting date}
+\PY{n}{data\PYZus{}v2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{year}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{data\PYZus{}v2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Month\PYZhy{}year}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{dt}\PY{o}{.}\PY{n}{year} 
+\PY{n}{data\PYZus{}v2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{month}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{data\PYZus{}v2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Month\PYZhy{}year}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{dt}\PY{o}{.}\PY{n}{month}
+\PY{n}{data\PYZus{}v2}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Month\PYZhy{}year}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{data\PYZus{}v2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dew\PYZus{}Point\PYZus{}°K}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{data\PYZus{}v2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dew\PYZus{}Point\PYZus{}°C}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{+} \PY{l+m+mf}{273.15}
+\PY{c+c1}{\PYZsh{}data\PYZus{}v2.head()}
+\PY{c+c1}{\PYZsh{}Other Transformations }
+\PY{n}{drop\PYZus{}list} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{RH\PYZus{}}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dew\PYZus{}Point\PYZus{}°C}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Air\PYZus{}T\PYZus{}°C}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{WS\PYZus{}m/s}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n}{data\PYZus{}v2} \PY{o}{=} \PY{n}{data\PYZus{}v2}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{n}{drop\PYZus{}list}\PY{p}{)}
+
+\PY{n}{data\PYZus{}v2}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 396 entries, 0 to 395
+Data columns (total 10 columns):
+ \#   Column             Non-Null Count  Dtype
+---  ------             --------------  -----
+ 0   date               396 non-null    datetime64[ns]
+ 1   Rain\_mm            396 non-null    float64
+ 2   Cloud\_Amount\_\%     396 non-null    float64
+ 3   SWR\_W/m2           396 non-null    float64
+ 4   Soil\_Mois\_cum/cum  396 non-null    float64
+ 5   Air\_Pres\_Pa        396 non-null    float64
+ 6   ET\_mm/month        396 non-null    float64
+ 7   year               396 non-null    int32
+ 8   month              396 non-null    int32
+ 9   Dew\_Point\_°K       396 non-null    float64
+dtypes: datetime64[ns](1), float64(7), int32(2)
+memory usage: 28.0 KB
+    \end{Verbatim}
+
+    Let's dig deep to analyse timeseries properties
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{53}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{} Will use data\PYZus{}v2 now \PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}}
+
+\PY{c+c1}{\PYZsh{} \PYZsh{}Some data prep}
+\PY{c+c1}{\PYZsh{} data= df\PYZus{}Avg.copy() \PYZsh{}Create a copy before transformations, we can always fallback to this if something goes off}
+\PY{c+c1}{\PYZsh{} \PYZsh{}data}
+\PY{c+c1}{\PYZsh{} \PYZsh{} spliting date}
+\PY{c+c1}{\PYZsh{} data[\PYZsq{}year\PYZsq{}] = data[\PYZsq{}Month\PYZhy{}year\PYZsq{}].dt.year }
+\PY{c+c1}{\PYZsh{} data[\PYZsq{}month\PYZsq{}] = data[\PYZsq{}Month\PYZhy{}year\PYZsq{}].dt.month}
+\PY{c+c1}{\PYZsh{} data.rename(columns=\PYZob{}\PYZsq{}Month\PYZhy{}year\PYZsq{}:\PYZsq{}date\PYZsq{}\PYZcb{}, inplace=True)}
+\PY{c+c1}{\PYZsh{} data.info()}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Plotting Line plot for Time Series data
+
+Please note that data is already re-sampled to Monthly average. Since,
+the volume column is of continuous data type, we will use line graph to
+visualize it. As it's `Rain Data' we expect it to have seasonality.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{54}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} \PYZsh{} If \PYZsq{}Date\PYZsq{} is a column, but not the index, you can set it as the index}
+\PY{c+c1}{\PYZsh{}data.set\PYZus{}index(\PYZsq{}date\PYZsq{}, inplace=True)}
+\PY{n}{data\PYZus{}v2}\PY{o}{.}\PY{n}{set\PYZus{}index}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{55}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}See Monthly Patterns}
+\PY{n}{sns}\PY{o}{.}\PY{n}{boxplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{month}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Rain\PYZus{}mm}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{data\PYZus{}v2}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}Yes, monsoon!}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{55}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<Axes: xlabel='month', ylabel='Rain\_mm'>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_21_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{56}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Assuming df is your DataFrame}
+\PY{n}{sns}\PY{o}{.}\PY{n}{set}\PY{p}{(}\PY{n}{style}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{whitegrid}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)} \PY{c+c1}{\PYZsh{} Setting the style to whitegrid for a clean background}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{12}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)} \PY{c+c1}{\PYZsh{} Setting the figure size}
+\PY{n}{sns}\PY{o}{.}\PY{n}{lineplot}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{data\PYZus{}v2}\PY{p}{,} \PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rain\PYZus{}mm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rain\PYZus{}mm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{blue}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Adding labels and title}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rain\PYZus{}mm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Avg Monthly Rainfall(mm) Over Time}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_22_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{57}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}12\PYZhy{}M Moving Average}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{20}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{)}\PY{p}{)}
+\PY{n}{twelve\PYZus{}months\PYZus{}moving\PYZus{}average} \PY{o}{=} \PY{n}{data\PYZus{}v2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rain\PYZus{}mm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{rolling}\PY{p}{(}\PY{n}{window}\PY{o}{=}\PY{l+m+mi}{12}\PY{p}{)}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{lineplot}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{data\PYZus{}v2}\PY{p}{,} \PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{date}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rain\PYZus{}mm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rain\PYZus{}mm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{blue}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{twelve\PYZus{}months\PYZus{}moving\PYZus{}average}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rolling Mean}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{n}{loc}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{best}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{12 Months Moving Average}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{57}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 1.0, '12 Months Moving Average')
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_23_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Detecting Seasonality Using Auto Correlation
+
+We will detect Seasonality using the autocorrelation function (ACF)
+plot. Peaks at regular intervals in the ACF plot suggest the presence of
+seasonality.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{58}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Plot the ACF}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{18}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{plot\PYZus{}acf}\PY{p}{(}\PY{n}{data\PYZus{}v2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rain\PYZus{}mm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{lags}\PY{o}{=}\PY{l+m+mi}{12}\PY{p}{)}  \PY{c+c1}{\PYZsh{} As it is monthly data, a lag of 12 would represent an yearly cycle}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Lag}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Autocorrelation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Autocorrelation Function (ACF) Plot}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<Figure size 1800x600 with 0 Axes>
+    \end{Verbatim}
+
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_25_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    We can see that we have Seasonality in our monthly data. (Data is also
+cyclic: Try lag in multiples of 12 to see visual evidence. It show
+resets evey 12 months.)
+
+    Detecting Stationarity
+
+We will perform the ADF test to formally test for stationarity.
+
+The test is based on:
+
+\begin{itemize}
+\tightlist
+\item
+  Null hypothesis that a unit root is present in the time series,
+  indicating that the series is non-stationary.
+\item
+  The alternative hypothesis is that the series is stationary after
+  differencing (i.e., it has no unit root).
+\item
+  The ADF test employs an augmented regression model that includes
+  lagged differences of the series to determine the presence of a unit
+  root.
+\end{itemize}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{60}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Assuming df is your DataFrame}
+\PY{n}{result} \PY{o}{=} \PY{n}{adfuller}\PY{p}{(}\PY{n}{data\PYZus{}v2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rain\PYZus{}mm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ADF Statistic:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{result}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{p\PYZhy{}value:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{result}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Critical Values:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{result}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+ADF Statistic: -4.2623600913855775
+p-value: 0.0005158194038950781
+Critical Values: \{'1\%': -3.4475850438570115, '5\%': -2.869135963767125, '10\%':
+-2.5708164748773332\}
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{61}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{} data (v1) results \PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}\PYZhy{}same as data\PYZus{}v2 results}
+\PY{c+c1}{\PYZsh{} ADF Statistic: \PYZhy{}4.2623600913855775}
+\PY{c+c1}{\PYZsh{} p\PYZhy{}value: 0.0005158194038950781}
+\PY{c+c1}{\PYZsh{} Critical Values: \PYZob{}\PYZsq{}1\PYZpc{}\PYZsq{}: \PYZhy{}3.4475850438570115, \PYZsq{}5\PYZpc{}\PYZsq{}: \PYZhy{}2.869135963767125, \PYZsq{}10\PYZpc{}\PYZsq{}: \PYZhy{}2.5708164748773332\PYZcb{}}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Based on the * ADF Stat \textless{} all Critical Values. * p-value**:
+0.0005158194038950781 So, we accept the Alternate hypothesis and
+conclude that the data appear to be stationary according to the
+Augmented Dickey-Fuller test.
+
+\begin{itemize}
+\item
+  This suggests that differencing or other transformations may NOT be
+  needed to achieve stationarity before applying certain time series
+  models
+\item
+  D-F Test we want p-value** \textless{} 0.05 to reject its null
+  hypothesis. Based on the test which been done before, we can
+  comfortably say that our training data is stationary.
+\end{itemize}
+
+    Decompose TS
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{62}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Decompose the time series using the seasonal\PYZus{}decompose function}
+\PY{n}{decomposition} \PY{o}{=} \PY{n}{seasonal\PYZus{}decompose}\PY{p}{(}\PY{n}{data\PYZus{}v2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rain\PYZus{}mm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{model}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{additive}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{period}\PY{o}{=}\PY{l+m+mi}{12}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{63}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Plot the decomposed components}
+\PY{n}{fig}\PY{p}{,} \PY{n}{axes} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}
+\PY{n}{decomposition}\PY{o}{.}\PY{n}{observed}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{title}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Observed}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{decomposition}\PY{o}{.}\PY{n}{trend}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{title}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Trend}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{decomposition}\PY{o}{.}\PY{n}{seasonal}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{,} \PY{n}{title}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Seasonal}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{decomposition}\PY{o}{.}\PY{n}{resid}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{,} \PY{n}{title}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Residual}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_33_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Let's make some Models
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{64}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Prepare Target}
+\PY{c+c1}{\PYZsh{}Y = data[\PYZsq{}Rain\PYZus{}mm\PYZsq{}]}
+\PY{n}{Y} \PY{o}{=} \PY{n}{data\PYZus{}v2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rain\PYZus{}mm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{c+c1}{\PYZsh{}Y}
+
+\PY{c+c1}{\PYZsh{}Prepare features}
+
+\PY{n}{features} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{data\PYZus{}v2}\PY{o}{.}\PY{n}{select\PYZus{}dtypes}\PY{p}{(}\PY{n}{include} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{number}\PY{p}{)}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}features.remove(\PYZsq{}Rain\PYZus{}mm\PYZsq{})}
+\PY{c+c1}{\PYZsh{} Features to remove}
+\PY{n}{to\PYZus{}remove} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rain\PYZus{}mm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{day}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{year}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{month}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Removing non\PYZhy{}feature cols from list}
+\PY{n}{features} \PY{o}{=} \PY{p}{[}\PY{n}{f} \PY{k}{for} \PY{n}{f} \PY{o+ow}{in} \PY{n}{features} \PY{k}{if} \PY{n}{f} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n}{to\PYZus{}remove}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{}print(features)}
+\PY{c+c1}{\PYZsh{}Features to exog (For Sarimax)}
+\PY{n}{exog} \PY{o}{=} \PY{n}{data\PYZus{}v2}\PY{p}{[}\PY{n}{features}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  SARIMAX Model
+
+  SARIMA extends ARIMA's capabilities to handle seasonal patterns.
+  SARIMAX further enhances the model's predictive accuracy by
+  incorporating exogenous variables. X= Multivariate
+\end{enumerate}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{65}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{tsa}\PY{n+nn}{.}\PY{n+nn}{statespace}\PY{n+nn}{.}\PY{n+nn}{sarimax} \PY{k+kn}{import} \PY{n}{SARIMAX}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{66}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Parameter definition for best model selection, we will use AIC as model metric \PYZhy{} lesser the better}
+
+\PY{c+c1}{\PYZsh{} Define the p, d and q parameters to take any value between 0 and 2}
+\PY{n}{p} \PY{o}{=} \PY{n}{d} \PY{o}{=} \PY{n}{q} \PY{o}{=} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Generate all different combinations of p, d and q triplets}
+\PY{n}{pdq} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{itertools}\PY{o}{.}\PY{n}{product}\PY{p}{(}\PY{n}{p}\PY{p}{,} \PY{n}{d}\PY{p}{,} \PY{n}{q}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Generate all different combinations of seasonal p, q and q triplets}
+\PY{n}{seasonal\PYZus{}pdq} \PY{o}{=} \PY{p}{[}\PY{p}{(}\PY{n}{x}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{x}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{x}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{,} \PY{l+m+mi}{12}\PY{p}{)} \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n+nb}{list}\PY{p}{(}\PY{n}{itertools}\PY{o}{.}\PY{n}{product}\PY{p}{(}\PY{n}{p}\PY{p}{,} \PY{n}{d}\PY{p}{,} \PY{n}{q}\PY{p}{)}\PY{p}{)}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{}Initiate AIC Score}
+
+\PY{n}{AIC\PYZus{}scores\PYZus{}list} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{}pdq}
+\PY{c+c1}{\PYZsh{}seasonal\PYZus{}pdq}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{67}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Run all the combinations to find the best fit}
+\PY{n}{best\PYZus{}aic} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{inf}
+\PY{n}{best\PYZus{}pdq} \PY{o}{=} \PY{k+kc}{None}
+\PY{n}{best\PYZus{}seasonal\PYZus{}pdq} \PY{o}{=} \PY{k+kc}{None}
+\PY{n}{temp\PYZus{}model} \PY{o}{=} \PY{k+kc}{None}
+
+\PY{k}{for} \PY{n}{param} \PY{o+ow}{in} \PY{n}{pdq}\PY{p}{:}
+    \PY{k}{for} \PY{n}{param\PYZus{}seasonal} \PY{o+ow}{in} \PY{n}{seasonal\PYZus{}pdq}\PY{p}{:}
+        \PY{n}{temp\PYZus{}model} \PY{o}{=} \PY{n}{SARIMAX}\PY{p}{(}\PY{n}{Y}\PY{p}{,}\PY{n}{exog}\PY{o}{=}\PY{n}{exog}\PY{p}{,}\PY{n}{order} \PY{o}{=} \PY{n}{param}\PY{p}{,}\PY{n}{seasonal\PYZus{}order} \PY{o}{=} \PY{n}{param\PYZus{}seasonal}\PY{p}{,} \PY{n}{enforce\PYZus{}stationarity}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{enforce\PYZus{}invertibility}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+        \PY{n}{results} \PY{o}{=} \PY{n}{temp\PYZus{}model}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+        \PY{n}{l} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+        \PY{n}{l}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{param}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+        \PY{n}{l}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{param}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+        \PY{n}{l}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{param}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{)}
+        \PY{n}{l}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{param\PYZus{}seasonal}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+        \PY{n}{l}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{param\PYZus{}seasonal}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+        \PY{n}{l}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{param\PYZus{}seasonal}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{)}
+        \PY{n}{l}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{param\PYZus{}seasonal}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{)}
+        \PY{n}{l}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{results}\PY{o}{.}\PY{n}{aic}\PY{p}{)}
+        \PY{n}{AIC\PYZus{}scores\PYZus{}list}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{l}\PY{p}{)}
+        \PY{k}{if} \PY{n}{results}\PY{o}{.}\PY{n}{aic} \PY{o}{\PYZlt{}} \PY{n}{best\PYZus{}aic}\PY{p}{:}
+            \PY{n}{best\PYZus{}aic} \PY{o}{=} \PY{n}{results}\PY{o}{.}\PY{n}{aic}
+            \PY{n}{best\PYZus{}pdq} \PY{o}{=} \PY{n}{param}
+            \PY{n}{best\PYZus{}seasonal\PYZus{}pdq} \PY{o}{=} \PY{n}{param\PYZus{}seasonal}
+      
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Best SARIMAX}\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s2}{x}\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s2}{12 model \PYZhy{} AIC:}\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{best\PYZus{}pdq}\PY{p}{,} \PY{n}{best\PYZus{}seasonal\PYZus{}pdq}\PY{p}{,} \PY{n}{best\PYZus{}aic}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Best SARIMAX(1, 1, 1)x(0, 1, 1, 12)12 model - AIC:3695.3685873168743
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{68}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Data(v1) Best model per last RUN: Best SARIMAX(1, 1, 1)x(0, 1, 1, 12)12 model \PYZhy{} AIC:3689.0420654543386}
+\PY{c+c1}{\PYZsh{}Data(v2) Best model per last RUN: Best SARIMAX(1, 1, 1)x(0, 1, 1, 12)12 model \PYZhy{} AIC:3695.3685873168743}
+
+
+\PY{n}{AIC\PYZus{}scores} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{o}{.}\PY{n}{from\PYZus{}records}\PY{p}{(}\PY{n}{AIC\PYZus{}scores\PYZus{}list}\PY{p}{)}
+\PY{n}{AIC\PYZus{}scores}\PY{o}{.}\PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{p}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{d}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{q}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{P}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{D}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Q}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{s}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{AIC}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n}{AIC\PYZus{}scores}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{n}{AIC\PYZus{}scores}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{AIC}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{argmin}\PY{p}{(}\PY{p}{)}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{68}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+p         1.000000
+d         1.000000
+q         1.000000
+P         0.000000
+D         1.000000
+Q         1.000000
+s        12.000000
+AIC    3695.368587
+Name: 59, dtype: float64
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{69}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}See more AIC Details}
+\PY{n}{AIC\PYZus{}scores}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{69}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+   p  d  q  P  D  Q   s          AIC
+0  0  0  0  0  0  0  12  6001.250978
+1  0  0  0  0  0  1  12  4012.553658
+2  0  0  0  0  1  0  12  3871.665807
+3  0  0  0  0  1  1  12  3709.989163
+4  0  0  0  1  0  0  12  4005.182815
+5  0  0  0  1  0  1  12  3995.792261
+6  0  0  0  1  1  0  12  3777.534033
+7  0  0  0  1  1  1  12  3711.805557
+8  0  0  1  0  0  0  12  4023.526334
+9  0  0  1  0  0  1  12  4011.075254
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{70}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{20}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{)}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{AIC\PYZus{}scores}\PY{o}{.}\PY{n}{AIC}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{blue}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{l+m+mi}{27}\PY{p}{,} \PY{n}{AIC\PYZus{}scores}\PY{o}{.}\PY{n}{AIC}\PY{p}{[}\PY{l+m+mi}{27}\PY{p}{]}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{r*}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{70}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+[<matplotlib.lines.Line2D at 0x14b0d0d0990>]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_42_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{71}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{best\PYZus{}pdq}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{best\PYZus{}seasonal\PYZus{}pdq}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+(1, 1, 1)
+(0, 1, 1, 12)
+    \end{Verbatim}
+
+    AIC Analysis: Best Model Selection
+
+After fitting the data with different combination of models, we got the
+best parameters as following:
+
+\begin{verbatim}
+* p = 1, d = 1, q = 1
+* P = 0, D = 1, Q = 1
+* s = 12
+\end{verbatim}
+
+    Run Best Model
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{72}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{best\PYZus{}model} \PY{o}{=} \PY{n}{SARIMAX}\PY{p}{(}\PY{n}{Y}\PY{p}{,}
+                     \PY{n}{exog}\PY{o}{=}\PY{n}{exog}\PY{p}{,}
+                     \PY{n}{order} \PY{o}{=} \PY{n}{best\PYZus{}pdq}\PY{p}{,}
+                     \PY{n}{seasonal\PYZus{}order} \PY{o}{=} \PY{n}{best\PYZus{}seasonal\PYZus{}pdq}\PY{p}{,} 
+                     \PY{n}{enforce\PYZus{}stationarity}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} 
+                     \PY{n}{enforce\PYZus{}invertibility}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{results} \PY{o}{=} \PY{n}{best\PYZus{}model}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}tsa\textbackslash{}base\textbackslash{}tsa\_model.py:473:
+ValueWarning: No frequency information was provided, so inferred frequency MS
+will be used.
+  self.\_init\_dates(dates, freq)
+J:\textbackslash{}anaconda3\textbackslash{}envs\textbackslash{}torch\textbackslash{}Lib\textbackslash{}site-packages\textbackslash{}statsmodels\textbackslash{}base\textbackslash{}model.py:607:
+ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check
+mle\_retvals
+  warnings.warn("Maximum Likelihood optimization failed to "
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{73}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}See results}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{results}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{tables}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+                                     SARIMAX Results
+================================================================================
+==========
+Dep. Variable:                            Rain\_mm   No. Observations:
+396
+Model:             SARIMAX(1, 1, 1)x(0, 1, 1, 12)   Log Likelihood
+-1837.684
+Date:                            Sat, 28 Sep 2024   AIC
+3695.369
+Time:                                    15:55:19   BIC
+3734.849
+Sample:                                01-01-1990   HQIC
+3711.030
+                                     - 12-01-2022
+Covariance Type:                              opg
+================================================================================
+==========
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}data (V1) result}
+\PY{c+c1}{\PYZsh{} SARIMAX Results                                      }
+\PY{c+c1}{\PYZsh{} ==========================================================================================}
+\PY{c+c1}{\PYZsh{} Dep. Variable:                            Rain\PYZus{}mm   No. Observations:                  396}
+\PY{c+c1}{\PYZsh{} Model:             SARIMAX(1, 1, 1)x(0, 1, 1, 12)   Log Likelihood               \PYZhy{}1831.481}
+\PY{c+c1}{\PYZsh{} Date:                            Sat, 28 Sep 2024   AIC                           3688.961}
+\PY{c+c1}{\PYZsh{} Time:                                    15:13:46   BIC                           3740.285}
+\PY{c+c1}{\PYZsh{} Sample:                                01\PYZhy{}01\PYZhy{}1990   HQIC                          3709.321}
+\PY{c+c1}{\PYZsh{}                                      \PYZhy{} 12\PYZhy{}01\PYZhy{}2022                                         }
+\PY{c+c1}{\PYZsh{} Covariance Type:                              opg                                         }
+\PY{c+c1}{\PYZsh{} ==========================================================================================}
+
+\PY{c+c1}{\PYZsh{}data (V2) result}
+\PY{c+c1}{\PYZsh{} SARIMAX Results                                      }
+\PY{c+c1}{\PYZsh{} ==========================================================================================}
+\PY{c+c1}{\PYZsh{} Dep. Variable:                            Rain\PYZus{}mm   No. Observations:                  396}
+\PY{c+c1}{\PYZsh{} Model:             SARIMAX(1, 1, 1)x(0, 1, 1, 12)   Log Likelihood               \PYZhy{}1837.684}
+\PY{c+c1}{\PYZsh{} Date:                            Sat, 28 Sep 2024   AIC                           3695.369}
+\PY{c+c1}{\PYZsh{} Time:                                    15:55:19   BIC                           3734.849}
+\PY{c+c1}{\PYZsh{} Sample:                                01\PYZhy{}01\PYZhy{}1990   HQIC                          3711.030}
+\PY{c+c1}{\PYZsh{}                                      \PYZhy{} 12\PYZhy{}01\PYZhy{}2022                                         }
+\PY{c+c1}{\PYZsh{} Covariance Type:                              opg                                         }
+\PY{c+c1}{\PYZsh{} ==========================================================================================}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{74}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{pred\PYZus{}dynamic} \PY{o}{=} \PY{n}{results}\PY{o}{.}\PY{n}{get\PYZus{}prediction}\PY{p}{(}\PY{n}{start}\PY{o}{=}\PY{n}{pd}\PY{o}{.}\PY{n}{to\PYZus{}datetime}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{2014\PYZhy{}01\PYZhy{}01}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{n}{dynamic}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{full\PYZus{}results}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{pred\PYZus{}dynamic\PYZus{}ci} \PY{o}{=} \PY{n}{pred\PYZus{}dynamic}\PY{o}{.}\PY{n}{conf\PYZus{}int}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{75}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{y\PYZus{}pred} \PY{o}{=} \PY{n}{pred\PYZus{}dynamic}\PY{o}{.}\PY{n}{predicted\PYZus{}mean}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{76}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{y\PYZus{}test} \PY{o}{=} \PY{n}{Y}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{2014}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{78}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{math}
+\PY{n}{rmse} \PY{o}{=} \PY{n}{math}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{p}{(}\PY{p}{(}\PY{n}{y\PYZus{}pred} \PY{o}{\PYZhy{}} \PY{n}{y\PYZus{}test}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{The Mean Squared Error of our predictions is }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n+nb}{round}\PY{p}{(}\PY{n}{rmse}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} data(v1) RMSE: The Mean Squared Error of our predictions is 30.3417}
+
+\PY{c+c1}{\PYZsh{} data(v2) RMSE: The Mean Squared Error of our predictions is 30.2905}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+The Mean Squared Error of our predictions is 30.2905
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{36}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} rmse = math.sqrt(mean\PYZus{}squared\PYZus{}error(y\PYZus{}test, y\PYZus{}pred))}
+\PY{c+c1}{\PYZsh{} rmse}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{79}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Plot the actual values.}
+\PY{n}{axis\PYZus{}plt} \PY{o}{=} \PY{n}{Y}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{1985}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{p}{]}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Train data}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Plot the predicted values.}
+\PY{n}{pred\PYZus{}dynamic}\PY{o}{.}\PY{n}{predicted\PYZus{}mean}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{ax}\PY{o}{=}\PY{n}{axis\PYZus{}plt}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Predictions}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Plot confidence values and fill it with some colour.}
+\PY{c+c1}{\PYZsh{} axis\PYZus{}plt.fill\PYZus{}between(pred\PYZus{}dynamic\PYZus{}ci.index, pred\PYZus{}dynamic\PYZus{}ci.iloc[:, 0], pred\PYZus{}dynamic\PYZus{}ci.iloc[:, 1], color=\PYZsq{}k\PYZsq{}, alpha=0.1)}
+\PY{n}{axis\PYZus{}plt}\PY{o}{.}\PY{n}{fill\PYZus{}betweenx}\PY{p}{(}\PY{n}{axis\PYZus{}plt}\PY{o}{.}\PY{n}{get\PYZus{}ylim}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{pd}\PY{o}{.}\PY{n}{to\PYZus{}datetime}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{2014}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{n}{Y}\PY{o}{.}\PY{n}{index}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.1}\PY{p}{,} \PY{n}{zorder}\PY{o}{=}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Set labels.}
+\PY{n}{axis\PYZus{}plt}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Years}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{axis\PYZus{}plt}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Monthly Avg Rainfall in mm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Put legend on the plot at the best place it fits.}
+\PY{n}{plt}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{n}{loc}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{best}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{79}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<matplotlib.legend.Legend at 0x14b0d0b0550>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_54_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{45}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} os.getcwd()}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{45}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+'P:\textbackslash{}\textbackslash{}IT\textbackslash{}\textbackslash{}Rainfall-TS-Sep2024\textbackslash{}\textbackslash{}Rainfall\_Timeseries'
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{80}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} \PYZsh{}Store predictions to test set and export in csv}
+\PY{c+c1}{\PYZsh{} sarimax\PYZus{}pred = data\PYZus{}v2[\PYZsq{}2014\PYZsq{}:]}
+\PY{c+c1}{\PYZsh{} sarimax\PYZus{}pred[\PYZsq{}Rainfall\PYZus{}Prediction\PYZsq{}]=y\PYZus{}pred}
+\PY{c+c1}{\PYZsh{} sarimax\PYZus{}pred.to\PYZus{}csv(\PYZdq{}Output\PYZbs{}sarimax\PYZus{}pred\PYZus{}v2.csv\PYZdq{})}
+\PY{c+c1}{\PYZsh{} del sarimax\PYZus{}pred}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Try XGBOOST
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{81}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{xgboost} \PY{k}{as} \PY{n+nn}{xgb}
+\PY{k+kn}{from} \PY{n+nn}{xgboost} \PY{k+kn}{import} \PY{n}{plot\PYZus{}importance}\PY{p}{,} \PY{n}{plot\PYZus{}tree}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{metrics} \PY{k+kn}{import} \PY{n}{mean\PYZus{}squared\PYZus{}error}\PY{p}{,} \PY{n}{mean\PYZus{}absolute\PYZus{}error}\PY{p}{,} \PY{n}{mean\PYZus{}absolute\PYZus{}percentage\PYZus{}error}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{82}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Split Test train}
+\PY{n}{train} \PY{o}{=} \PY{n}{data\PYZus{}v2}\PY{p}{[}\PY{p}{:}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{2014}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n}{test} \PY{o}{=} \PY{n}{data\PYZus{}v2}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{2014}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{}Training dataset}
+\PY{n}{y\PYZus{}train} \PY{o}{=} \PY{n}{train}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Rain\PYZus{}mm}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{X\PYZus{}train} \PY{o}{=} \PY{n}{train}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Rain\PYZus{}mm}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{}Testing dataset}
+\PY{n}{y\PYZus{}test} \PY{o}{=} \PY{n}{test}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Rain\PYZus{}mm}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{X\PYZus{}test} \PY{o}{=} \PY{n}{test}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Rain\PYZus{}mm}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{83}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Create XGB}
+
+\PY{n}{reg} \PY{o}{=} \PY{n}{xgb}\PY{o}{.}\PY{n}{XGBRegressor}\PY{p}{(}\PY{n}{n\PYZus{}estimators}\PY{o}{=}\PY{l+m+mi}{1000}\PY{p}{)}
+\PY{n}{reg}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{,}
+        \PY{n}{eval\PYZus{}set}\PY{o}{=}\PY{p}{[}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{n}{X\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}test}\PY{p}{)}\PY{p}{]}\PY{p}{,}
+        \PY{n}{early\PYZus{}stopping\PYZus{}rounds}\PY{o}{=}\PY{l+m+mi}{50}\PY{p}{,}
+       \PY{n}{verbose}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)} \PY{c+c1}{\PYZsh{} Change verbose to True if you want to see it train}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{83}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+XGBRegressor(base\_score=None, booster=None, callbacks=None,
+             colsample\_bylevel=None, colsample\_bynode=None,
+             colsample\_bytree=None, device=None, early\_stopping\_rounds=None,
+             enable\_categorical=False, eval\_metric=None, feature\_types=None,
+             gamma=None, grow\_policy=None, importance\_type=None,
+             interaction\_constraints=None, learning\_rate=None, max\_bin=None,
+             max\_cat\_threshold=None, max\_cat\_to\_onehot=None,
+             max\_delta\_step=None, max\_depth=None, max\_leaves=None,
+             min\_child\_weight=None, missing=nan, monotone\_constraints=None,
+             multi\_strategy=None, n\_estimators=1000, n\_jobs=None,
+             num\_parallel\_tree=None, random\_state=None, {\ldots})
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{84}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Feature Importance}
+\PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{plot\PYZus{}importance}\PY{p}{(}\PY{n}{reg}\PY{p}{,} \PY{n}{height}\PY{o}{=}\PY{l+m+mf}{0.9}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_61_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{85}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Run XGB on test set}
+\PY{n}{y\PYZus{}pred} \PY{o}{=} \PY{n}{reg}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{86}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{}Saving Predicted values to Pred df for ease of calculations/ visualization}
+\PY{n}{pred} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{n}{y\PYZus{}test}\PY{o}{.}\PY{n}{index}\PY{p}{)}
+\PY{n}{pred} \PY{o}{=} \PY{n}{pred}\PY{o}{.}\PY{n}{assign}\PY{p}{(}\PY{n}{Rain\PYZus{}mm}\PY{o}{=}\PY{p}{(}\PY{n}{y\PYZus{}pred}\PY{p}{)}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}pred}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{87}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Plot the actual values.}
+\PY{n}{axis\PYZus{}plt} \PY{o}{=} \PY{n}{y\PYZus{}test}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Train data}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Plot the predicted values.}
+\PY{n}{pred}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{ax}\PY{o}{=}\PY{n}{axis\PYZus{}plt}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Predictions}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Plot confidence values and fill it with some colour.}
+\PY{c+c1}{\PYZsh{} axis\PYZus{}plt.fill\PYZus{}between(pred\PYZus{}dynamic\PYZus{}ci.index, pred\PYZus{}dynamic\PYZus{}ci.iloc[:, 0], pred\PYZus{}dynamic\PYZus{}ci.iloc[:, 1], color=\PYZsq{}k\PYZsq{}, alpha=0.1)}
+\PY{n}{axis\PYZus{}plt}\PY{o}{.}\PY{n}{fill\PYZus{}betweenx}\PY{p}{(}\PY{n}{axis\PYZus{}plt}\PY{o}{.}\PY{n}{get\PYZus{}ylim}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{pd}\PY{o}{.}\PY{n}{to\PYZus{}datetime}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{2014}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{,} \PY{n}{Y}\PY{o}{.}\PY{n}{index}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.1}\PY{p}{,} \PY{n}{zorder}\PY{o}{=}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Set labels.}
+\PY{n}{axis\PYZus{}plt}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Years}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{axis\PYZus{}plt}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Monthly Avg Rainfall in mm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Put legend on the plot at the best place it fits.}
+\PY{n}{plt}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{n}{loc}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{best}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{87}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<matplotlib.legend.Legend at 0x14b0df43250>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_64_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{88}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{test}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rainfall\PYZus{}Prediction}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{reg}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test}\PY{p}{)}
+
+\PY{n}{train}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rain\PYZus{}mm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{style}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{k}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{)}\PY{p}{,} \PY{n}{label} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{train}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{test}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rain\PYZus{}mm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{style}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{b}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{)}\PY{p}{,} \PY{n}{label} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{test}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{test}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rainfall\PYZus{}Prediction}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{style}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{)}\PY{p}{,} \PY{n}{label} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{prediction}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mean monthly rainfall}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{88}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<matplotlib.legend.Legend at 0x14b11b88850>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_65_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{89}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{RMSE: }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n+nb}{round}\PY{p}{(}\PY{n}{mean\PYZus{}squared\PYZus{}error}\PY{p}{(}\PY{n}{y\PYZus{}true}\PY{o}{=}\PY{n}{test}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rain\PYZus{}mm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}\PY{n}{y\PYZus{}pred}\PY{o}{=}\PY{n}{test}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rainfall\PYZus{}Prediction}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{MAE: }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n+nb}{round}\PY{p}{(}\PY{n}{mean\PYZus{}absolute\PYZus{}error}\PY{p}{(}\PY{n}{y\PYZus{}true}\PY{o}{=}\PY{n}{test}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rain\PYZus{}mm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}\PY{n}{y\PYZus{}pred}\PY{o}{=}\PY{n}{test}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rainfall\PYZus{}Prediction}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{MAPE: }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n+nb}{round}\PY{p}{(}\PY{n}{mean\PYZus{}absolute\PYZus{}percentage\PYZus{}error}\PY{p}{(}\PY{n}{y\PYZus{}true}\PY{o}{=}\PY{n}{test}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rain\PYZus{}mm}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}\PY{n}{y\PYZus{}pred}\PY{o}{=}\PY{n}{test}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Rainfall\PYZus{}Prediction}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+RMSE:  824.157
+MAE:  16.217
+MAPE:  3.753
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} data v1 xgb statistics}
+\PY{c+c1}{\PYZsh{} RMSE:  1028.738}
+\PY{c+c1}{\PYZsh{} MAE:  17.679}
+\PY{c+c1}{\PYZsh{} MAPE:  4.749}
+    
+\PY{c+c1}{\PYZsh{} data v2 xgb statistics}
+\PY{c+c1}{\PYZsh{} RMSE:  824.157}
+\PY{c+c1}{\PYZsh{} MAE:  16.217}
+\PY{c+c1}{\PYZsh{} MAPE:  3.753}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{92}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} test.to\PYZus{}csv(\PYZdq{}Output\PYZbs{}\PYZbs{}xgb\PYZus{}test\PYZus{}v2.csv\PYZdq{})}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Let's Move to LSTM
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{48}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} We need a benchmark to compare LSTM network’s performance}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\end{Verbatim}
+\end{tcolorbox}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
